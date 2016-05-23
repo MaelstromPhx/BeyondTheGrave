@@ -1,0 +1,16 @@
+[
+{
+  "modid": "beyondthegrave",
+  "name": "Beyond the Grave",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["MaelstromPhoenix"],
+  "credits": "",
+  "logoFile": "assets/beyondthegrave/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
