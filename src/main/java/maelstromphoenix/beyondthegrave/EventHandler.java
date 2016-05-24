@@ -1,5 +1,7 @@
 package maelstromphoenix.beyondthegrave;
 
+import java.util.Collections;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,6 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,6 +28,9 @@ public class EventHandler {
 		if(event.getEntity() instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			
+			if(player.hasCapability(InventoryBackupCapability.INSTANCE, null))
+				player.getCapability(InventoryBackupCapability.INSTANCE, null).addInventoryBackup(event.getDrops());
+				
 			EntityZombie zombie = new EntityZombie(player.worldObj);
 			EntityLivingBase entityLiving = (EntityLivingBase)zombie;
 			
@@ -33,28 +40,22 @@ public class EventHandler {
 
 			inventory.items = event.getDrops();
 			
-			boolean head, chest, legs, feet, mainhand, offhand;
-			head = chest = legs = feet = mainhand = offhand = false;
+			boolean mainhand = false;
 			for(int i = 0; i < inventory.items.size(); i++){
 				ItemStack stack = inventory.items.get(i).getEntityItem();
-				if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, zombie) && !head){
+				if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, zombie)){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.HEAD, inventory.items.get(i).getEntityItem());
-					head = true;
-				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, zombie) && !chest){
+				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, zombie)){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.CHEST, inventory.items.get(i).getEntityItem());
-					chest = true;
-				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, zombie) && !legs){
+				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, zombie)){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.LEGS, inventory.items.get(i).getEntityItem());
-					legs = true;
-				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, zombie) && !feet){
+				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, zombie)){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.FEET, inventory.items.get(i).getEntityItem());
-					feet = true;
 				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.MAINHAND, zombie) && !mainhand){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.items.get(i).getEntityItem());
 					mainhand = true;
-				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.OFFHAND, zombie) && !offhand){
+				}else if(stack.getItem().isValidArmor(stack, EntityEquipmentSlot.OFFHAND, zombie)){
 					zombie.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, inventory.items.get(i).getEntityItem());
-					offhand = true;
 				}
 			}
 			
@@ -64,9 +65,9 @@ public class EventHandler {
 			zombie.setDropChance(EntityEquipmentSlot.FEET, 0);
 			zombie.setDropChance(EntityEquipmentSlot.MAINHAND, 0);
 			zombie.setDropChance(EntityEquipmentSlot.OFFHAND, 0);
-
+			
 			zombie.setCustomNameTag(player.getName() + "'s Corpse");
-			zombie.replaceItemInInventory(1, inventory.items.get(0).getEntityItem());
+
 			zombie.enablePersistence();
 			zombie.setPositionAndRotation(player.posX, player.posY, player.posZ, player.cameraYaw, player.cameraPitch);
 			player.worldObj.spawnEntityInWorld(zombie);
@@ -101,7 +102,19 @@ public class EventHandler {
 		if(event.getSource().getEntity() instanceof EntityPlayer)
 			return;
 		event.setCanceled(true);
-		zombie.setHealth(1);
+		zombie.setHealth(0.5f);
+	}
+	
+	@SubscribeEvent
+	public void onPlayerClone(PlayerEvent.Clone event){
+		EntityPlayer player = event.getEntityPlayer();
+		EntityPlayer original = event.getOriginal();
+		if(!event.isWasDeath())
+			return;
+
+		if(!original.hasCapability(InventoryBackupCapability.INSTANCE, null) || !player.hasCapability(InventoryBackupCapability.INSTANCE, null))
+			return;
+		player.getCapability(InventoryBackupCapability.INSTANCE, null).setInventoryBackup(original.getCapability(InventoryBackupCapability.INSTANCE, null).getInventoryBackup());
 	}
 	
 }
