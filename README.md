@@ -7,3 +7,5 @@ Features:
 * Zombies will equip your items on death. The better your armor, the harder it will be to get your items back.
 * Zombies will not die to anything except for player damage sources to insure item safety.
 * Inventory Backups: On death your inventory is stored and can be restored later using commands.
+
+This mod can be compiled from here or downloaded on [Curse](http://mods.curse.com/mc-mods/minecraft/245390-beyond-the-grave).
