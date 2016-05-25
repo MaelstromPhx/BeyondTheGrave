@@ -1,10 +1,12 @@
 package maelstromphoenix.beyondthegrave.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
 import maelstromphoenix.beyondthegrave.InventoryBackupCapability;
+import maelstromphoenix.beyondthegrave.InventoryBackupCapability.InventoryBackup;
 import maelstromphoenix.beyondthegrave.InventoryCapability.Inventory;
 import maelstromphoenix.beyondthegrave.commands.CommandHandler.SubCommand;
 import net.minecraft.command.ICommandSender;
@@ -13,7 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import scala.actors.threadpool.Arrays;
 
 public class CommandRestore extends SubCommand{
 
@@ -30,6 +34,43 @@ public class CommandRestore extends SubCommand{
 	@Override
 	public String getUsage() {
 		return "/beyondthegrave restore <player> <index> <targetplayer>";
+	}
+
+	@Override
+	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
+			BlockPos pos) {
+		if(args.length == 2){
+			List<String> players = new ArrayList(Arrays.asList(server.getPlayerList().getAllUsernames()));
+			
+			for(int i = 0; i < players.size(); i++){
+				if(!players.get(i).contains(args[1].toLowerCase())){
+					players.remove(i);
+					i--;
+				}
+			}
+			return players;
+		}else if(args.length == 3){
+			EntityPlayer player = server.getPlayerList().getPlayerByUsername(args[1]);
+			if(player != null && player.hasCapability(InventoryBackupCapability.INSTANCE, null)){
+				List<Inventory> backup = player.getCapability(InventoryBackupCapability.INSTANCE, null).getInventoryBackup();
+				List<String> indexes = new ArrayList();
+				for(int i = 0; i < backup.size(); i++){
+					indexes.add(Integer.toString(i));
+				}
+				return indexes;
+			}
+			return null;
+		}else if(args.length == 4){
+			List<String> players = new ArrayList(Arrays.asList(server.getPlayerList().getAllUsernames()));
+			for(int i = 0; i < players.size(); i++){
+				if(!players.get(i).contains(args[3].toLowerCase())){
+					players.remove(i);
+					i--;
+				}
+			}
+			return players;
+		}
+		return new ArrayList<String>();
 	}
 
 	@Override

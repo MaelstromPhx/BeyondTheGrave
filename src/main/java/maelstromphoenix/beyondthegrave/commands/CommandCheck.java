@@ -1,5 +1,6 @@
 package maelstromphoenix.beyondthegrave.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -13,7 +14,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import scala.actors.threadpool.Arrays;
 
 public class CommandCheck extends SubCommand {
 
@@ -30,6 +33,35 @@ public class CommandCheck extends SubCommand {
 	@Override
 	public String getUsage() {
 		return "/beyondthegrave check <player> <index>";
+	}
+
+	@Override
+	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
+			BlockPos pos) {
+		if(args.length == 2){
+			List<String> players = new ArrayList(Arrays.asList(server.getPlayerList().getAllUsernames()));
+			
+			for(int i = 0; i < players.size(); i++){
+				if(!players.get(i).contains(args[1].toLowerCase())){
+					players.remove(i);
+					i--;
+				}
+			}
+			return players;
+		}else if(args.length == 3){
+			EntityPlayer player = server.getPlayerList().getPlayerByUsername(args[1]);
+			if(player != null && player.hasCapability(InventoryBackupCapability.INSTANCE, null)){
+				List<Inventory> backup = player.getCapability(InventoryBackupCapability.INSTANCE, null).getInventoryBackup();
+				List<String> indexes = new ArrayList();
+				for(int i = 0; i < backup.size(); i++){
+					indexes.add(Integer.toString(i));
+				}
+				return indexes;
+			}
+			return null;
+		}
+		
+		return new ArrayList<String>();
 	}
 
 	@Override
@@ -59,11 +91,13 @@ public class CommandCheck extends SubCommand {
 		}
 		List<EntityItem> items = backup.get(index).items;
 		
+		sender.addChatMessage(new TextComponentString(""));
+		sender.addChatMessage(new TextComponentString("----------------"));
 		for(int i = 0; i < items.size(); i++){
 			ItemStack stack = items.get(i).getEntityItem();
 			sender.addChatMessage(new TextComponentString(stack.stackSize + "x " + stack.getDisplayName()));
 		}
-		
+		sender.addChatMessage(new TextComponentString("----------------"));
 	}
 
 }
