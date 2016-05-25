@@ -1,8 +1,8 @@
-package maelstromphoenix.beyondthegrave;
+package maelstromphoenix.beyondthegrave.commands;
 
 import java.util.Map;
 
-import maelstromphoenix.beyondthegrave.CommandHandler.SubCommand;
+import maelstromphoenix.beyondthegrave.commands.CommandHandler.SubCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -21,7 +21,7 @@ public class CommandHelp extends SubCommand{
 	
 	@Override
 	public String getUsage() {
-		return "/beyondthegrave help";
+		return "/beyondthegrave help or /beyondthegrave help <command>";
 	}
 
 	@Override

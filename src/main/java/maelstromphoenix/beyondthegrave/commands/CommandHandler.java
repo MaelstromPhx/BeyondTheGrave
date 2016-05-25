@@ -1,4 +1,4 @@
-package maelstromphoenix.beyondthegrave;
+package maelstromphoenix.beyondthegrave.commands;
 
 import java.util.HashMap;
 import java.util.Map;

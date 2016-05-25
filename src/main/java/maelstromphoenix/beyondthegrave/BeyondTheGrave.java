@@ -2,7 +2,7 @@ package maelstromphoenix.beyondthegrave;
 
 import maelstromphoenix.beyondthegrave.EventHandler;
 import maelstromphoenix.beyondthegrave.InventoryCapability;
-
+import maelstromphoenix.beyondthegrave.commands.CommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;

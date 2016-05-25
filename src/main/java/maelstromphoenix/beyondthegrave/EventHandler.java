@@ -2,6 +2,7 @@ package maelstromphoenix.beyondthegrave;
 
 import java.util.Collections;
 
+import maelstromphoenix.beyondthegrave.InventoryCapability.Inventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

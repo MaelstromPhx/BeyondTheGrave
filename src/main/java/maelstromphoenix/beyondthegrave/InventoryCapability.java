@@ -1,10 +1,10 @@
 package maelstromphoenix.beyondthegrave;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import maelstromphoenix.beyondthegrave.BeyondTheGrave;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.Item;
@@ -108,5 +108,15 @@ public class InventoryCapability {
             
         });
     }
+    
+    public static class Inventory {
+
+		public List<EntityItem> items = new ArrayList<EntityItem>();
+		
+		public Inventory(){
+			
+		}
+		
+	}
 	
 }
